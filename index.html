@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading…</title>
+<style>
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    text-align: center;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+#startBtn {
+    font-size: 34px;
+    padding: 40px 60px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#loadingScreen {
+    display: none;
+    font-size: 28px;
+    margin-top: 40vh;
+}
+
+#jumpscare {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+}
+</style>
+</head>
+<body>
+
+<button id="startBtn">START</button>
+
+<div id="loadingScreen">Ładowanie…</div>
+
+<img id="jumpscare" src="https://i.imgur.com/VQD0xr7.jpeg">
+
+<audio id="sound" src="sound.mp3"></audio>
+
+<script>
+async function fullscreen() {
+    let el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+
+document.getElementById("startBtn").addEventListener("click", async () => {
+
+    // włącz fullscreen
+    await fullscreen();
+
+    const btn = document.getElementById("startBtn");
+    const load = document.getElementById("loadingScreen");
+    const img = document.getElementById("jumpscare");
+    const audio = document.getElementById("sound");
+
+    audio.volume = 1.0;
+
+    btn.style.display = "none";
+    load.style.display = "block";
+
+    // Czekamy 3–6 sekund (losowo)
+    let delay = 3000 + Math.random() * 3000;
+
+    setTimeout(async () => {
+        // EKRAN JUMP SCARE
+        load.style.display = "none";
+        img.style.display = "block";
+
+        // wibracje jeśli są możliwe
+        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+
+        // mega głośny dźwięk
+        try {
+            await audio.play();
+        } catch (e) {
+            alert("Kliknij jeszcze raz, żeby aktywować efekt!");
+        }
+
+        // glitch flicker
+        setInterval(() => {
+            img.style.filter =
+                `hue-rotate(${Math.random() * 360}deg) 
+                 blur(${Math.random() * 3}px)
+                 contrast(${1 + Math.random()} )`;
+        }, 80);
+
+    }, delay);
+});
+</script>
+
+</body>
+</html>
